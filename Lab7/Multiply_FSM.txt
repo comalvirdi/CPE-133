@@ -1,0 +1,159 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: Comal Virdi
+// 
+// Create Date: 06/02/2019 05:00:19 PM
+// Design Name: 
+// Module Name: Multiply_FSM
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module Multiply_FSM(
+    input clk,
+    input enter,
+    input [3:0] B,
+    output logic [1:0] SR_SEL,
+    output logic ACC_LD,
+    output logic ACC_CLR
+    );
+    
+    parameter [2:0]
+    HOLD = 3'b000,
+    START = 3'b001,
+    BIT0 = 3'b010,
+    BIT1 = 3'b011,
+    BIT2 = 3'b100,
+    BIT3 = 3'b101;
+    
+    logic [3:0] B;
+    logic ACC_LD, ACC_CLR, enter;
+    logic [2:0] SR_SEL;
+    logic [2:0] NS;
+    logic [2:0] PS = HOLD;
+    
+    always_ff @ (posedge clk)
+    begin
+        if (enter == 1)
+        PS <= START;
+        else
+        PS<= NS;
+    end
+    
+    always_comb
+    begin
+    SR_SEL = 0;
+    ACC_LD = 0;
+    ACC_CLR = 0;
+    
+    case (PS)
+        
+        HOLD:
+            begin
+                SR_SEL = 0;
+                ACC_LD = 0;
+                ACC_CLR = 0;
+                NS = HOLD;
+            end
+            
+        START:
+            begin
+                SR_SEL = 1;
+                ACC_LD = 0;
+                ACC_CLR = 1;
+                NS = BIT0;
+            end
+            
+        BIT0:
+            begin
+                if (B[0] == 1)
+                    begin
+                        SR_SEL = 2;
+                        ACC_LD = 1;
+                        ACC_CLR = 0;
+                        NS = BIT1;
+                    end
+                else
+                    begin
+                        SR_SEL = 2;
+                        ACC_LD = 0;
+                        ACC_CLR = 0;
+                        NS = BIT1;
+                    end
+               
+            end
+            
+        BIT1:
+            begin
+                if (B[1] == 1)
+                    begin
+                        SR_SEL = 2;
+                        ACC_LD = 1;
+                        ACC_CLR = 0;
+                        NS = BIT2;
+                    end
+                else
+                    begin
+                        SR_SEL = 2;
+                        ACC_LD = 0;
+                        ACC_CLR = 0;
+                        NS = BIT2;
+                    end
+               
+            end
+        BIT2:
+            begin
+                if (B[2] == 1)
+                    begin
+                        SR_SEL = 2;
+                        ACC_LD = 1;
+                        ACC_CLR = 0;
+                        NS = BIT3;
+                    end
+                else
+                    begin
+                        SR_SEL = 2;
+                        ACC_LD = 0;
+                        ACC_CLR = 0;
+                        NS = BIT3;
+                    end
+               
+            end
+        BIT3:
+            begin
+                if (B[3] == 1)
+                    begin
+                        SR_SEL = 2;
+                        ACC_LD = 1;
+                        ACC_CLR = 0;
+                        NS = HOLD;
+                    end
+                else
+                    begin
+                        SR_SEL = 2;
+                        ACC_LD = 0;
+                        ACC_CLR = 0;
+                        NS = HOLD;
+                    end
+               
+            end
+        default:
+            NS = HOLD;
+        
+      endcase  
+    end
+    
+    
+    
+endmodule

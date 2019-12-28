@@ -1,0 +1,43 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: Comal Virdi
+// 
+// Create Date: 06/04/2019 11:32:49 AM
+// Design Name: 
+// Module Name: lab7
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module lab7(
+    input [3:0] A,
+    input clk,
+    input enter,
+    input [3:0] B,
+    output [7:0] seg,
+    output [3:0] an
+    );
+    
+    logic [1:0] t1;
+    logic t2, t3;
+    logic [7:0] t4;
+    logic [7:0] t5;
+    
+    Multiply_FSM MFSM (.enter(enter), .clk(clk), .B(B), .SR_SEL(t1), .ACC_LD(t2), .ACC_CLR(t3));
+    ShiftRegister SR01 (.clk(clk), .CLR(0), .SEL(t1), .D({4'b0000, A}), .Q(t4));
+    Accumulator ACC (.clk(clk), .LD(t2), .CLR(t3), .D(t4), .Q(t5));
+    univ_sseg USEG (.clk(clk), .cnt1({6'b000000, t5}), .valid(1), .ssegs(seg), .disp_en(an), .cnt2(0), .dp_en(0), .dp_sel(0), .mod_sel(0), .sign(0));
+    
+    
+endmodule
